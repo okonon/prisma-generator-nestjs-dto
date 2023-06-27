@@ -172,13 +172,11 @@ export function decorateApiProperty(field: ParsedField): string {
     return '@ApiProperty()\n';
   }
 
-  
   if (
     field.apiProperties?.length &&
     field.apiProperties[0].name === 'hidden' &&
     field.apiProperties[0].value === 'true'
   ) {
-    console.log(field.apiProperties);
     return '@ApiHideProperty()\n';
   }
 
