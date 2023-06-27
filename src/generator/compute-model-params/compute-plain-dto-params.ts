@@ -32,6 +32,7 @@ export const computePlainDtoParams = ({
   templateHelpers,
 }: ComputePlainDtoParamsParam): PlainDtoParams => {
   let hasApiProperty = false;
+  let hasApiHideProperty = false;
   const imports: ImportStatementParams[] = [];
   const apiExtraModels: string[] = [];
 
@@ -104,6 +105,13 @@ export const computePlainDtoParams = ({
         { default: false },
       );
       if (decorators.apiProperties.length) hasApiProperty = true;
+      if (
+        decorators.apiProperties.some(
+          (p) => p.name === 'hidden' && p.value === 'true',
+        )
+      ) {
+        hasApiHideProperty = true;
+      }
       const typeProperty = decorators.apiProperties.find(
         (p) => p.name === 'type',
       );
@@ -127,6 +135,8 @@ export const computePlainDtoParams = ({
     const destruct = [];
     if (apiExtraModels.length) destruct.push('ApiExtraModels');
     if (hasApiProperty) destruct.push('ApiProperty');
+
+    if (hasApiHideProperty) destruct.push('ApiHideProperty');
     imports.unshift({ from: '@nestjs/swagger', destruct });
   }
 

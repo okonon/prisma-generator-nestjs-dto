@@ -24,6 +24,7 @@ export const computeConnectDtoParams = ({
   templateHelpers,
 }: ComputeConnectDtoParamsParam): ConnectDtoParams => {
   let hasApiProperty = false;
+  let hasApiHideProperty = false;
   const imports: ImportStatementParams[] = [];
   const apiExtraModels: string[] = [];
   const extraClasses: string[] = [];
@@ -125,6 +126,13 @@ export const computeConnectDtoParams = ({
         { default: false },
       );
       if (decorators.apiProperties.length) hasApiProperty = true;
+      if (
+        decorators.apiProperties.some(
+          (p) => p.name === 'hidden' && p.value === 'true',
+        )
+      ) {
+        hasApiHideProperty = true;
+      }
     }
 
     if (templateHelpers.config.noDependencies) {
@@ -139,6 +147,7 @@ export const computeConnectDtoParams = ({
     const destruct = [];
     if (apiExtraModels.length) destruct.push('ApiExtraModels');
     if (hasApiProperty) destruct.push('ApiProperty');
+    if (hasApiHideProperty) destruct.push('ApiHideProperty');
     imports.unshift({ from: '@nestjs/swagger', destruct });
   }
 

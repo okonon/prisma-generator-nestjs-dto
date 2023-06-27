@@ -12,6 +12,7 @@ const ApiProps = [
   'minItems',
   'maxItems',
   'example',
+  'hidden',
 ];
 
 const PrismaScalarToFormat: Record<string, { type: string; format?: string }> =
@@ -169,6 +170,16 @@ export function decorateApiProperty(field: ParsedField): string {
     field.apiProperties[0].name === 'dummy'
   ) {
     return '@ApiProperty()\n';
+  }
+
+  
+  if (
+    field.apiProperties?.length &&
+    field.apiProperties[0].name === 'hidden' &&
+    field.apiProperties[0].value === 'true'
+  ) {
+    console.log(field.apiProperties);
+    return '@ApiHideProperty()\n';
   }
 
   let decorator = '';

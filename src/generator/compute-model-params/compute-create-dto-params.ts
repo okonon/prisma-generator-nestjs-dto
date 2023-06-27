@@ -1,6 +1,7 @@
 import slash from 'slash';
 import path from 'node:path';
 import {
+  DTO_CREATE_EXCLUDED,
   DTO_CREATE_HIDDEN,
   DTO_CREATE_OPTIONAL,
   DTO_RELATION_CAN_CONNECT_ON_CREATE,
@@ -54,6 +55,7 @@ export const computeCreateDtoParams = ({
   templateHelpers,
 }: ComputeCreateDtoParamsParam): CreateDtoParams => {
   let hasApiProperty = false;
+  let hasApiHideProperty = false;
   const imports: ImportStatementParams[] = [];
   const apiExtraModels: string[] = [];
   const extraClasses: string[] = [];
@@ -78,6 +80,7 @@ export const computeCreateDtoParams = ({
 
     if (isReadOnly(field)) return result;
     if (isAnnotatedWith(field, DTO_CREATE_HIDDEN)) return result;
+    if (isAnnotatedWith(field, DTO_CREATE_EXCLUDED)) return result;
     if (isRelation(field)) {
       if (!isAnnotatedWithOneOf(field, DTO_RELATION_MODIFIERS_ON_CREATE)) {
         return result;
@@ -201,6 +204,13 @@ export const computeCreateDtoParams = ({
           noEncapsulation: true,
         });
       if (decorators.apiProperties.length) hasApiProperty = true;
+      if (
+        decorators.apiProperties.some(
+          (p) => p.name === 'hidden' && p.value === 'true',
+        )
+      ) {
+        hasApiHideProperty = true;
+      }
       const typeProperty = decorators.apiProperties.find(
         (p) => p.name === 'type',
       );
@@ -224,6 +234,7 @@ export const computeCreateDtoParams = ({
     const destruct = [];
     if (apiExtraModels.length) destruct.push('ApiExtraModels');
     if (hasApiProperty) destruct.push('ApiProperty');
+    if (hasApiHideProperty) destruct.push('ApiHideProperty');
     imports.unshift({ from: '@nestjs/swagger', destruct });
   }
 
