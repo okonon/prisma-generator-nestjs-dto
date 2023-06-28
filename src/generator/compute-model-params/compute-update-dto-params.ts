@@ -42,6 +42,7 @@ import type {
 import { parseApiProperty } from '../api-decorator';
 import { IClassValidator } from '../types';
 import { parseClassValidators } from '../class-validator';
+import { API_HIDE_PROPERTY } from '../constants';
 
 interface ComputeUpdateDtoParamsParam {
   model: Model;
@@ -210,7 +211,7 @@ export const computeUpdateDtoParams = ({
       if (decorators.apiProperties.length) hasApiProperty = true;
       if (
         decorators.apiProperties.some(
-          (p) => p.name === 'hidden' && p.value === 'true',
+          (p) => p.name === API_HIDE_PROPERTY && p.value === 'true',
         )
       ) {
         hasApiHideProperty = true;
@@ -240,7 +241,7 @@ export const computeUpdateDtoParams = ({
     const destruct = [];
     if (apiExtraModels.length) destruct.push('ApiExtraModels');
     if (hasApiProperty) destruct.push('ApiProperty');
-    if (hasApiHideProperty) destruct.push('ApiHideProperty');
+    if (hasApiHideProperty) destruct.push(API_HIDE_PROPERTY);
     imports.unshift({ from: '@nestjs/swagger', destruct });
   }
 

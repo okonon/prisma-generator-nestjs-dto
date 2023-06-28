@@ -20,6 +20,7 @@ import type {
 } from '../types';
 import { parseApiProperty } from '../api-decorator';
 import { IApiProperty } from '../types';
+import { API_HIDE_PROPERTY } from '../constants';
 
 interface ComputePlainDtoParamsParam {
   model: Model;
@@ -107,7 +108,7 @@ export const computePlainDtoParams = ({
       if (decorators.apiProperties.length) hasApiProperty = true;
       if (
         decorators.apiProperties.some(
-          (p) => p.name === 'hidden' && p.value === 'true',
+          (p) => p.name === API_HIDE_PROPERTY && p.value === 'true',
         )
       ) {
         hasApiHideProperty = true;
@@ -136,7 +137,7 @@ export const computePlainDtoParams = ({
     if (apiExtraModels.length) destruct.push('ApiExtraModels');
     if (hasApiProperty) destruct.push('ApiProperty');
 
-    if (hasApiHideProperty) destruct.push('ApiHideProperty');
+    if (hasApiHideProperty) destruct.push(API_HIDE_PROPERTY);
     imports.unshift({ from: '@nestjs/swagger', destruct });
   }
 

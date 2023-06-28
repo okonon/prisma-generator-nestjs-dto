@@ -1,4 +1,5 @@
 import { DMMF } from '@prisma/generator-helper';
+import { API_HIDE_PROPERTY } from './constants';
 import { IApiProperty, ParsedField } from './types';
 
 const ApiProps = [
@@ -12,7 +13,7 @@ const ApiProps = [
   'minItems',
   'maxItems',
   'example',
-  'hidden',
+  API_HIDE_PROPERTY,
 ];
 
 const PrismaScalarToFormat: Record<string, { type: string; format?: string }> =
@@ -174,10 +175,10 @@ export function decorateApiProperty(field: ParsedField): string {
 
   if (
     field.apiProperties?.length &&
-    field.apiProperties[0].name === 'hidden' &&
+    field.apiProperties[0].name === API_HIDE_PROPERTY &&
     field.apiProperties[0].value === 'true'
   ) {
-    return '@ApiHideProperty()\n';
+    return `@${API_HIDE_PROPERTY}()\n`;
   }
 
   let decorator = '';
